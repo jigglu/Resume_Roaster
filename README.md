@@ -3,7 +3,7 @@
 Upload your resume and get brutally honest feedback from a ruthless AI recruiter.
 
 ## Live App
-[Click here to roast your resume]([YO](https://resumeroaster-dxke4dhr4wpb434tausgzt.streamlit.app/))
+[Click here to roast your resume](https://resumeroaster-dxke4dhr4wpb434tausgzt.streamlit.app/)
 
 ## What it does
 - Upload any PDF resume
