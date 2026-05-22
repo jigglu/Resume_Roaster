@@ -27,7 +27,7 @@ if uploaded_file:
                 st.stop()
 
             llm = ChatGroq(
-                model="llama3-8b-8192",
+                model="mixtral-8x7b-32768",
                 api_key=st.secrets["GROQ_API_KEY"]
             )
 
