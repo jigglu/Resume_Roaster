@@ -5,6 +5,13 @@ from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 import tempfile
 
+# Initialize IP Cache
+@st.cache_resource
+def get_ip_cache():
+    return set()
+
+ip_cache = get_ip_cache()
+
 st.set_page_config(page_title="Resume Roaster 🔥", page_icon="🔥")
 st.title("🔥 Resume Roaster")
 st.subheader("Upload your resume. Prepare to cry.")
@@ -12,7 +19,17 @@ st.subheader("Upload your resume. Prepare to cry.")
 uploaded_file = st.file_uploader("Drop your resume here", type="pdf")
 
 if uploaded_file:
+    # Extract the user's IP address
+    client_ip = st.context.headers.get("X-Forwarded-For", "unknown").split(",")[0].strip()
+    if client_ip == "unknown":
+        client_ip = st.context.ip_address
+
     if st.button("Roast me 💀"):
+        # Block the request if the IP is already in the cache
+        if client_ip in ip_cache and client_ip is not None:
+            st.error("You have already roasted a resume! Limit 1 per IP.")
+            st.stop()
+
         with st.spinner("Heating up the roaster..."):
             with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp:
                 tmp.write(uploaded_file.read())
@@ -42,6 +59,10 @@ if uploaded_file:
 
             chain = prompt | llm | StrOutputParser()
             response = chain.invoke({"resume_text": resume_text})
+            
+            # Record the IP after a successful API call
+            if client_ip is not None:
+                ip_cache.add(client_ip)
 
         st.markdown("---")
         st.subheader("💀 The Roast")
